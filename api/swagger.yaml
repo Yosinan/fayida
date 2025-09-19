@@ -12,10 +12,10 @@ info:
     description: Endpoints for managing user sessions
 
 servers:
-  - url: http://localhost:4000/api
-    description: Local server
   - url: https://api.fayida.yosinan.tech/api/
     description: Prod Server
+  - url: http://localhost:4000/api
+    description: Local server
 
 components:
   securitySchemes:
