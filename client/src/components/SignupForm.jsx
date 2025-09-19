@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { signup } from "../api/api";
-import { useNavigate as navigator } from "react-router-dom";
-import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import "../styles/signup.css";
+import { useNavigate, Link } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
 
-export default function SignUpPage() {
-    const navigate = navigator();
+export default function SignupPage() {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [formData, setFormData] = useState({
@@ -46,128 +45,172 @@ export default function SignUpPage() {
     };
 
     return (
-        <div className="signup-container">
-            <div className="signup-wrapper">
-                {/* Logo + Header */}
-                <div className="signup-header">
-                    <div>
-                        <img src="https://www.fayidaacademy.com/common_files/main/smallfulllogo.png" alt="Fayida Logo" className="logo-image" />
+        <div className="min-vh-100 bg-light d-flex align-items-center py-5">
+            <div className="container">
+                <div className="row justify-content-center">
+                    <div className="col-md-8 col-lg-6">
+                        {/* Card */}
+                        <div className="card shadow border-0 rounded-4">
+                            <div className="card-body p-5">
+                                {/* Header */}
+                                <div className="text-center mb-4">
+                                    <img
+                                        src="https://www.fayidaacademy.com/common_files/main/smallfulllogo.png"
+                                        alt="Fayida Logo"
+                                        className="img-fluid mb-3"
+                                        style={{ maxHeight: '60px' }}
+                                    />
+                                    <h2 className="card-title fw-bold">Fayida Academy</h2>
+                                    <p className="text-muted">Join us today and start learning!</p>
+                                </div>
+
+                                <h5 className="text-center mb-4">Create an Account</h5>
+
+                                {/* Form */}
+                                <form onSubmit={handleSubmit}>
+                                    <div className="row">
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="firstName" className="form-label">First Name</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text">
+                                                    <User size={18} />
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    id="firstName"
+                                                    placeholder="First name"
+                                                    value={formData.first_name}
+                                                    onChange={(e) => handleInputChange("first_name", e.target.value)}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6 mb-3">
+                                            <label htmlFor="lastName" className="form-label">Last Name</label>
+                                            <div className="input-group">
+                                                <span className="input-group-text">
+                                                    <User size={18} />
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    className="form-control"
+                                                    id="lastName"
+                                                    placeholder="Last name"
+                                                    value={formData.last_name}
+                                                    onChange={(e) => handleInputChange("last_name", e.target.value)}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label htmlFor="email" className="form-label">Email Address</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text">
+                                                <Mail size={18} />
+                                            </span>
+                                            <input
+                                                type="email"
+                                                className="form-control"
+                                                id="email"
+                                                placeholder="Enter your email"
+                                                value={formData.email}
+                                                onChange={(e) => handleInputChange("email", e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label htmlFor="password" className="form-label">Password</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text">
+                                                <Lock size={18} />
+                                            </span>
+                                            <input
+                                                type={showPassword ? "text" : "password"}
+                                                className="form-control"
+                                                id="password"
+                                                placeholder="Create Password"
+                                                value={formData.password}
+                                                onChange={(e) => handleInputChange("password", e.target.value)}
+                                                required
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                            >
+                                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-3">
+                                        <label htmlFor="confirmPassword" className="form-label">Confirm Password</label>
+                                        <div className="input-group">
+                                            <span className="input-group-text">
+                                                <Lock size={18} />
+                                            </span>
+                                            <input
+                                                type={showConfirmPassword ? "text" : "password"}
+                                                className="form-control"
+                                                id="confirmPassword"
+                                                placeholder="Confirm Password"
+                                                value={formData.confirmPassword}
+                                                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                                                required
+                                            />
+                                            <button
+                                                type="button"
+                                                className="btn btn-outline-secondary"
+                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            >
+                                                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="mb-4">
+                                        <div className="form-check">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                id="terms"
+                                                checked={formData.agreeToTerms}
+                                                onChange={(e) => handleInputChange("agreeToTerms", e.target.checked)}
+                                            />
+                                            <label className="form-check-label" htmlFor="terms">
+                                                I agree to the <a href="#" className="text-decoration-none">Terms of Service</a> and <a href="#" className="text-decoration-none">Privacy Policy</a>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="d-grid mb-4">
+                                        <button type="submit" className="btn btn-primary btn-lg">
+                                            Create Account
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div className="text-center">
+                                    <p className="mb-0">
+                                        Already have an account?{" "}
+                                        <Link to="/login" className="text-decoration-none">
+                                            Log in
+                                        </Link>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="text-center mt-4">
+                            <p className="text-muted small">© 2025 Fayida Academy. All rights reserved.</p>
+                        </div>
                     </div>
-                    <h1>Fayida Academy</h1>
-                    <p>Join us today and start learning!</p>
-                </div>
-
-                {/* Form Card */}
-                <div className="signup-card">
-                    <form onSubmit={handleSubmit} className="signup-form">
-                        {/* First + Last Name */}
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label>First Name</label>
-                                <input
-                                    type="text"
-                                    placeholder="First name"
-                                    value={formData.first_name}
-                                    onChange={(e) => handleInputChange("first_name", e.target.value)}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Last Name</label>
-                                <input
-                                    type="text"
-                                    placeholder="Last name"
-                                    value={formData.last_name}
-                                    onChange={(e) => handleInputChange("last_name", e.target.value)}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        {/* Email */}
-                        <div className="form-group">
-                            <label>Email Address</label>
-                            <div className="input-icon">
-                                <Mail className="icon" size={18} />
-                                <input
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    value={formData.email}
-                                    onChange={(e) => handleInputChange("email", e.target.value)}
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        {/* Password */}
-                        <div className="form-group">
-                            <label>Password</label>
-                            <div className="input-icon">
-                                <Lock className="icon" size={18} />
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    placeholder="Create Password"
-                                    value={formData.password}
-                                    onChange={(e) => handleInputChange("password", e.target.value)}
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    className="toggle-btn"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                >
-                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Confirm Password */}
-                        <div className="form-group">
-                            <label>Confirm Password</label>
-                            <div className="input-icon">
-                                <Lock className="icon" size={18} />
-                                <input
-                                    type={showConfirmPassword ? "text" : "password"}
-                                    placeholder="Confirm Password"
-                                    value={formData.confirmPassword}
-                                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    className="toggle-btn"
-                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                >
-                                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                                </button>
-                            </div>
-                        </div>
-
-                        {/* Terms */}
-                        <div className="form-terms">
-                            <input
-                                type="checkbox"
-                                id="terms"
-                                checked={formData.agreeToTerms}
-                                onChange={(e) => handleInputChange("agreeToTerms", e.target.checked)}
-                            />
-                            <label htmlFor="terms">
-                                I agree to the{" "}
-                                <a href="#">Terms of Service</a> and{" "}
-                                <a href="#">Privacy Policy</a>
-                            </label>
-                        </div>
-
-                        {/* Submit */}
-                        <button type="submit" className="submit-btn">
-                            Create Account
-                        </button>
-                    </form>
-                </div>
-
-                {/* Footer */}
-                <div className="signup-footer">
-                    <p>© 2024 Fayida Academy. All rights reserved.</p>
                 </div>
             </div>
         </div>
