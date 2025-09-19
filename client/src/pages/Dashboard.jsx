@@ -1,5 +1,8 @@
 import { Card, CardContent } from "../components/ui/Card";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 import { Calendar, Trophy, Flame } from "lucide-react";
 import { getBestStreak, getStreak, fetchStudentDetail } from "../api/api";
 import "../styles/dashboard.css";
@@ -10,6 +13,13 @@ export default function DashboardPage() {
     const [bestStreak, setBestStreak] = useState(0);
     const [showModal, setShowModal] = useState(false);
 
+    const { logoutUser } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logoutUser();
+        navigate("/login");
+    };
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
@@ -46,6 +56,14 @@ export default function DashboardPage() {
                             <Flame className="icon-orange" />
                             <span className="streak-count">{streak}</span>
                         </div>
+                        <button
+                            className="logout-btn"
+                            onClick={handleLogout}
+                            title="Logout"
+                            aria-label="Logout"
+                        >
+                            <LogOut size={18} />
+                        </button>
                         <div className="user-avatar">{studentDetail?.name.charAt(0)}</div>
                     </div>
                 </div>

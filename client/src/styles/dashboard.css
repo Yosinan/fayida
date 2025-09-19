@@ -290,3 +290,54 @@
     grid-template-columns: 1fr 1fr;
     gap: 1.5rem;
 }
+
+
+/* Logout button styles */
+.logout-btn {
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-right: 12px;
+}
+
+.logout-btn:hover {
+    background-color: #f8f9fa;
+    color: #dc3545;
+    transform: scale(1.05);
+}
+
+.logout-btn:active {
+    transform: scale(0.95);
+}
+
+/* Adjust header layout for the new button */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.streak-display {
+    margin-right: 0;
+    /* Remove previous margin since we have gap now */
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .logout-btn {
+        padding: 6px;
+        margin-right: 8px;
+    }
+
+    .logout-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+}
