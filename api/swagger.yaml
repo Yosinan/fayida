@@ -36,9 +36,6 @@ components:
           type: string
         lastName:
           type: string
-        role:
-          type: string
-          enum: [student, instructor, admin]
         phoneNumber:
           type: string
           nullable: true
@@ -87,7 +84,6 @@ components:
         - password
         - firstName
         - lastName
-        - role
       properties:
         email:
           type: string
@@ -101,9 +97,6 @@ components:
         lastName:
           type: string
           example: Doe
-        role:
-          type: string
-          enum: [student, instructor, admin]
 
     LoginRequest:
       type: object
