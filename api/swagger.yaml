@@ -1,0 +1,313 @@
+openapi: 3.0.3
+info:
+  title: Fayida API
+  version: 1.0.0
+  description: API documentation for Fayida platform
+
+servers:
+  - url: http://localhost:4000/api
+    description: Local server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+          enum: [student, instructor, admin]
+        phoneNumber:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        refreshToken:
+          type: string
+        deviceId:
+          type: string
+          nullable: true
+        deviceInfo:
+          type: string
+          nullable: true
+        isValid:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        lastSeenAt:
+          type: string
+          format: date-time
+          nullable: true
+        expiresAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+        - role
+      properties:
+        email:
+          type: string
+          example: student@gmail.com
+        password:
+          type: string
+          example: password123
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        role:
+          type: string
+          enum: [student, instructor, admin]
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: student@gmail.com
+        password:
+          type: string
+          example: password123
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+
+paths:
+  /auth/signup:
+    post:
+      summary: Signup new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+
+  /auth/refresh:
+    post:
+      summary: Refresh JWT token
+      responses:
+        '200':
+          description: New tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+
+  /auth/logout:
+    post:
+      summary: Logout user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Successfully logged out
+
+  /users:
+    get:
+      summary: List all users
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: role
+          schema:
+            type: string
+            enum: [student, instructor, admin]
+          description: Filter users by role
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/me/streak:
+    get:
+      summary: Get current student's streak
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current streak count
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+
+  /users/me/streak/best:
+    get:
+      summary: Get student's best streak
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Best streak
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  achievedAt:
+                    type: string
+                    format: date-time
+
+  /users/students/{id}:
+    get:
+      summary: Get student details by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Student detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/instructors/{id}:
+    get:
+      summary: Get instructor details by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Instructor detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /sessions/me:
+    get:
+      summary: Get my sessions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+
+  /sessions/me/{id}:
+    delete:
+      summary: Revoke one of my sessions
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Session revoked
+
+  /sessions/{id}:
+    delete:
+      summary: Admin revoke any session
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Session revoked by admin
