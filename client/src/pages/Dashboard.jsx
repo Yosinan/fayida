@@ -100,7 +100,7 @@ export default function DashboardPage() {
                 </div>
             ) : (
                 <main className="dashboard-main">
-                    <div className="placeholder">
+                    <div className="">
                         <h2>Welcome to Fayida Academy!</h2>
                         <p>Click on the streak in the top-right corner to view your streak details.</p>
                     </div>
