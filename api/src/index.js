@@ -20,6 +20,11 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 
+// Health check
+app.get('/', (req, res) => {
+    res.send('Fayida API is running');
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/sessions', sessionRoutes);
