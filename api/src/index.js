@@ -16,7 +16,7 @@ const app = express();
 app.use(helmet());
 // app.use(cors({ origin: true }));
 app.use(cors({
-    origin: 'https://fayida.yosinan.tech/',
+    origin: 'https://fayida.yosinan.tech',
     credentials: true
 }));
 app.use(morgan('dev'));
