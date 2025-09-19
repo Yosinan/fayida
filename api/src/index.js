@@ -16,7 +16,7 @@ const app = express();
 app.use(helmet());
 // app.use(cors({ origin: true }));
 app.use(cors({
-    origin: 'http://localhost:3000', // or '*' for all origins (not recommended for production)
+    origin: '*',
     credentials: true
 }));
 app.use(morgan('dev'));
