@@ -3,6 +3,13 @@ info:
   title: Fayida API
   version: 1.0.0
   description: API documentation for Fayida platform
+  tags:
+  - name: Authentication
+    description: Endpoints related to user authentication
+  - name: Users
+    description: Endpoints for managing users
+  - name: Sessions
+    description: Endpoints for managing user sessions
 
 servers:
   - url: http://localhost:4000/api
@@ -120,6 +127,8 @@ components:
 paths:
   /auth/signup:
     post:
+      tags:
+        - Authentication
       summary: Signup new user
       requestBody:
         required: true
@@ -137,6 +146,8 @@ paths:
 
   /auth/login:
     post:
+      tags:
+        - Authentication
       summary: Login user
       requestBody:
         required: true
@@ -154,6 +165,8 @@ paths:
 
   /auth/refresh:
     post:
+      tags:
+        - Authentication
       summary: Refresh JWT token
       responses:
         '200':
@@ -165,6 +178,8 @@ paths:
 
   /auth/logout:
     post:
+      tags:
+        - Authentication
       summary: Logout user
       security:
         - bearerAuth: []
@@ -174,6 +189,8 @@ paths:
 
   /users:
     get:
+      tags:
+        - Users
       summary: List all users
       security:
         - bearerAuth: []
@@ -196,6 +213,8 @@ paths:
 
   /users/me/streak:
     get:
+      tags:
+        - Users
       summary: Get current student's streak
       security:
         - bearerAuth: []
@@ -212,6 +231,8 @@ paths:
 
   /users/me/streak/best:
     get:
+      tags:
+        - Users
       summary: Get student's best streak
       security:
         - bearerAuth: []
@@ -231,6 +252,8 @@ paths:
 
   /users/students/{id}:
     get:
+      tags:
+        - Users
       summary: Get student details by ID
       security:
         - bearerAuth: []
@@ -250,6 +273,8 @@ paths:
 
   /users/instructors/{id}:
     get:
+      tags:
+        - Users
       summary: Get instructor details by ID
       security:
         - bearerAuth: []
@@ -269,6 +294,8 @@ paths:
 
   /sessions/me:
     get:
+      tags:
+       - Sessions
       summary: Get my sessions
       security:
         - bearerAuth: []
@@ -284,6 +311,8 @@ paths:
 
   /sessions/me/{id}:
     delete:
+      tags:
+      - Sessions
       summary: Revoke one of my sessions
       security:
         - bearerAuth: []
@@ -299,6 +328,8 @@ paths:
 
   /sessions/{id}:
     delete:
+      tags:
+        - Sessions
       summary: Admin revoke any session
       security:
         - bearerAuth: []
