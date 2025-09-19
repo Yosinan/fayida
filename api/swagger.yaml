@@ -14,6 +14,8 @@ info:
 servers:
   - url: http://localhost:4000/api
     description: Local server
+  - url: https://api.fayida.yosinan.tech/api/
+    description: Prod Server
 
 components:
   securitySchemes:
