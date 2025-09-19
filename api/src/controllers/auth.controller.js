@@ -47,7 +47,7 @@ async function login(req, res) {
     const activeSessions = await prisma.session.count({
         where: { userId: user.id, isValid: true }
     });
-    if (activeSessions >= 21) {
+    if (activeSessions >= 2) {
         // block login attempt
         return res.status(403).json({ message: 'Maximum of 2 active devices reached. Logout from another device or contact admin.' });
     }
