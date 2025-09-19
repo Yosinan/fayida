@@ -74,4 +74,11 @@ async function getStreak(req, res) {
     res.json({ count: streak.count, lastLoginAt: streak.lastLoginAt });
 }
 
-module.exports = { listUsers, studentDetail, instructorDetail, getStreak };
+// get best streak info
+async function getBestStreak(req, res) {
+    const bestStreak = await prisma.bestStreak.findUnique({ where: { userId: req.user.id } });
+    if (!bestStreak) return res.json({ count: 0, achievedAt: null });
+    res.json({ count: bestStreak.count, achievedAt: bestStreak.achievedAt });
+}
+
+module.exports = { listUsers, studentDetail, instructorDetail, getStreak, getBestStreak };

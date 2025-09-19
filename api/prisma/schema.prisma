@@ -22,6 +22,7 @@ model User {
   // relations
   sessions           Session[]
   streak             Streak?
+  bestStreak         BestStreak?
   // For reporting minimal relations:
   courses            Course[]  @relation("InstructorCourses", fields: [], references: [])
   enrollments        Enrollment[]
@@ -34,7 +35,7 @@ model Session {
   id            Int      @id @default(autoincrement())
   user          User     @relation(fields: [userId], references: [id])
   userId        Int
-  refreshToken  String
+  refreshToken  String   @unique
   deviceId      String?    // client-provided device id
   deviceInfo    String?    // user agent info
   isValid       Boolean   @default(true)
@@ -49,6 +50,14 @@ model Streak {
   userId       Int      @unique
   count        Int      @default(0)
   lastLoginAt  DateTime?
+}
+
+model BestStreak {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int      @unique
+  count       Int
+  achievedAt  DateTime @default(now())
 }
 
 model Course {

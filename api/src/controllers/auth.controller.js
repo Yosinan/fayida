@@ -17,7 +17,7 @@ function createRefreshToken() {
 }
 
 async function signup(req, res) {
-    const { email, password, firstName, lastName, role } = req.body;
+    const { email, password, firstName, lastName, role = "student" } = req.body;
     if (!email || !password || !firstName || !lastName || !role) {
         return res.status(400).json({ message: 'Missing required fields' });
     }
@@ -47,7 +47,7 @@ async function login(req, res) {
     const activeSessions = await prisma.session.count({
         where: { userId: user.id, isValid: true }
     });
-    if (activeSessions >= 2) {
+    if (activeSessions >= 21) {
         // block login attempt
         return res.status(403).json({ message: 'Maximum of 2 active devices reached. Logout from another device or contact admin.' });
     }
@@ -70,6 +70,9 @@ async function login(req, res) {
 
     // update streak now that they logged in
     await updateStreakOnLogin(user);
+
+    // update best streak if needed
+    await updateBestStreakOnLogin(user);
 
     return res.json({
         accessToken,
@@ -108,7 +111,16 @@ async function refresh(req, res) {
     const accessToken = signAccessToken(user, session.id);
     // update lastSeen
     await prisma.session.update({ where: { id: session.id }, data: { lastSeenAt: new Date() } });
-    return res.json({ accessToken });
+    return res.json({
+        accessToken,
+        user: {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName
+        }
+    });
 }
 
 // Helper: update streak on login
@@ -136,6 +148,20 @@ async function updateStreakOnLogin(user) {
         await prisma.streak.update({ where: { id: streak.id }, data: { count: streak.count + 1, lastLoginAt: now } });
     } else {
         await prisma.streak.update({ where: { id: streak.id }, data: { count: 0, lastLoginAt: now } });
+    }
+}
+
+async function updateBestStreakOnLogin(user) {
+    const streak = await prisma.streak.findUnique({ where: { userId: user.id } });
+    if (!streak) return;
+    const bestStreak = await prisma.bestStreak.findUnique({ where: { userId: user.id } });
+    if (!bestStreak) {
+        // create new best streak
+        await prisma.bestStreak.create({ data: { userId: user.id, count: streak.count, achievedAt: new Date() } });
+        return;
+    }
+    if (streak.count > bestStreak.count) {
+        await prisma.bestStreak.update({ where: { id: bestStreak.id }, data: { count: streak.count, achievedAt: new Date() } });
     }
 }
 
