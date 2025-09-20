@@ -13,9 +13,7 @@ export const AuthProvider = ({ children }) => {
         if (token) {
             refreshToken()
                 .then((res) => {
-                    console.log("refreshToken response:", res.data);
                     localStorage.setItem("accessToken", res.data.accessToken);
-                    console.log("Storing new user:", res.data.user);
                     setUser(res.data.user);
                 })
                 .catch(() => {

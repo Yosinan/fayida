@@ -43,13 +43,33 @@ async function login(req, res) {
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
 
-    // enforce max 2 active sessions
-    const activeSessions = await prisma.session.count({
-        where: { userId: user.id, isValid: true }
-    });
-    if (activeSessions >= 2) {
-        // block login attempt
-        return res.status(403).json({ message: 'Maximum of 2 active devices reached. Logout from another device or contact admin.' });
+    // Check if there's already an active session for this device
+    const existingDeviceSession = deviceId ? await prisma.session.findFirst({
+        where: {
+            userId: user.id,
+            deviceId: deviceId,
+            isValid: true
+        }
+    }) : null;
+
+    console.log('Existing device session:', existingDeviceSession);
+    // If no existing session for this device, enforce max 2 active sessions
+    if (!existingDeviceSession) {
+        const activeSessions = await prisma.session.count({
+            where: { userId: user.id, isValid: true }
+        });
+
+        if (activeSessions >= 2) {
+            return res.status(403).json({ message: 'Maximum of 2 active devices reached. Logout from another device or contact admin.' });
+        }
+    }
+
+    // If there's an existing session for this device, invalidate it first
+    if (existingDeviceSession) {
+        await prisma.session.update({
+            where: { id: existingDeviceSession.id },
+            data: { isValid: false }
+        });
     }
 
     // create refresh token and session
@@ -62,7 +82,9 @@ async function login(req, res) {
             refreshToken,
             deviceId: deviceId || null,
             deviceInfo: deviceInfo || req.get('User-Agent') || null,
-            expiresAt
+            expiresAt,
+            lastSeenAt: new Date(),
+            isValid: true
         }
     });
 
